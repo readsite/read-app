@@ -2,7 +2,8 @@
 /* CSS Document */
 @font-face {
     font-family: 'simsun';
-     src:url("../font/simsun.woff") format('woff');
+    src: url("../font/simsun.woff2") format('woff');
+    font-display: swap; 
 }
 
 * {
