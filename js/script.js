@@ -429,8 +429,27 @@ async function switchToDate(date) {
 // ========== 时间轴数据加载 ==========
 async function loadTimelineData() {
     try {
-        const res = await fetch(`${API_BASE}/api/posts`);
-        const dates = await res.json();
+        // 修改请求 URL，加上 type=published 参数
+        const res = await fetch(`${API_BASE}/api/posts?type=published`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        let data = await res.json();
+
+        // 从返回的对象数组中提取 date 字段
+        let dates = [];
+        if (Array.isArray(data)) {
+            dates = data.map(item => item.date).filter(d => d);
+        }
+
+        // 去重并排序（最新的在上）
+        dates = [...new Set(dates)].sort((a, b) => b.localeCompare(a));
+
+        if (!dates.length) {
+            document.querySelector('.month-list').innerHTML = '<li>暂无数据</li>';
+            document.querySelector('.date-grid').innerHTML = '<p>暂无日期</p>';
+            return;
+        }
+
+        // 按年月分组
         const monthMap = new Map();
         dates.forEach(date => {
             const [year, month] = date.split('-');
@@ -438,15 +457,18 @@ async function loadTimelineData() {
             if (!monthMap.has(key)) monthMap.set(key, []);
             monthMap.get(key).push(date);
         });
+
         const months = Array.from(monthMap.entries())
             .map(([key, dates]) => ({ key, dates }))
-            .sort((a, b) => (a.key < b.key ? 1 : -1));
+            .sort((a, b) => (a.key < b.key ? 1 : -1)); // 最新的月份在前
+
         renderTimeline(months);
     } catch (error) {
         console.error('加载时间轴数据失败', error);
+        document.querySelector('.month-list').innerHTML = '<li>加载失败</li>';
+        document.querySelector('.date-grid').innerHTML = '<p>加载失败，请刷新重试</p>';
     }
 }
-
 function renderTimeline(months) {
     const monthList = document.querySelector('.month-list');
     const dateGrid = document.querySelector('.date-grid');
