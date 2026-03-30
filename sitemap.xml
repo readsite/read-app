@@ -1,0 +1,19 @@
+# 允许所有搜索引擎抓取整个网站（除非另有禁止）
+User-agent: *
+Allow: /
+
+# 特别允许百度爬虫（其实上面已经允许，但可显式再声明）
+User-agent: Baiduspider
+Allow: /
+
+# 禁止抓取 API 路径（保护后端接口，避免泄露）
+User-agent: *
+Disallow: /api/
+Disallow: /api/*
+
+# 可选：禁止抓取常见的后台或私有路径
+Disallow: /admin/
+Disallow: /private/
+
+# 指定网站地图位置
+Sitemap: https://solitudenook.top/sitemap.xml
