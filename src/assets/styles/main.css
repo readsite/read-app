@@ -1,1 +1,367 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --gray-0: #f9f9f9;
+  --gray-1: #f0f0f0;
+  --gray-2: #e0e0e0;
+  --gray-3: #cccccc;
+  --gray-4: #999999;
+  --gray-5: #666666;
+  --gray-6: #333333;
+  --gray-7: #222222;
+  --overlay-light: rgba(0, 0, 0, 0.1);
+  --overlay-medium: rgba(0, 0, 0, 0.3);
+  --overlay-heavy: rgba(0, 0, 0, 0.9);
+  --delete-bg: #e74c3c;
+  --delete-active: #c0392b;
+  --toast-bg: rgba(0, 0, 0, 0.7);
+  --toast-text: #ffffff;
+  --album-ring: #333;
+  --album-ring-light: rgba(255,255,255,0.05);
+}
+
+.dark-mode {
+  --white: #1e1e1e;
+  --black: #f9f9f9;
+  --gray-0: #1e1e1e;
+  --gray-1: #2a2a2a;
+  --gray-2: #444444;
+  --gray-3: #666666;
+  --gray-4: #888888;
+  --gray-5: #aaaaaa;
+  --gray-6: #e0e0e0;
+  --gray-7: #2a2a2a;
+  --overlay-light: rgba(0, 0, 0, 0.6);
+  --overlay-medium: rgba(0, 0, 0, 0.7);
+  --overlay-heavy: rgba(0, 0, 0, 0.95);
+  --delete-bg: #c0392b;
+  --delete-active: #a93226;
+  --toast-bg: rgba(0, 0, 0, 0.8);
+  --album-ring: #2a2a2a;
+  --album-ring-light: rgba(255,255,255,0.03);
+}
+
+@font-face {
+  font-family: 'fangzhengsongti';
+  src: url('https://solitudenook.top/font/fangzhengsongti.ttf') format('truetype');
+  font-display: swap;
+}
+
+body {
+  font-family: 'fangzhengsongti', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--white);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--white);
+}
+
+.page-content {
+  width: 100%;
+  height: 100%;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-content.menu-shifted {
+  margin-left: 280px;
+}
+
+@media (max-width: 600px) {
+  .page-content.menu-shifted {
+    margin-left: 100%;
+  }
+}
+
+.card-container {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 80px);
+  overflow: hidden;
+}
+
+/* 离线占位 */
+.offline-placeholder {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.offline-content {
+  text-align: center;
+  color: var(--gray-6);
+}
+
+.offline-content i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: var(--gray-4);
+}
+
+.offline-content p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: var(--gray-5);
+}
+
+.offline-content .retry-hint {
+  font-size: 0.875rem;
+  color: var(--gray-4);
+  margin-top: 1rem;
+}
+
+/* 加载动画 */
+.initial-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--white);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.initial-loader .loader-content {
+  text-align: center;
+}
+
+.initial-loader .ri-loader-4-line {
+  font-size: 3rem;
+  color: var(--gray-4);
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100000;
+}
+
+/* 卡片通用样式 */
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 1.25rem;
+  overflow-y: auto;
+  background-color: var(--white);
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+.card::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: var(--gray-3);
+  border-radius: 4px;
+}
+
+/* 统计按钮 */
+.stats-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--white);
+  border-top: 1px solid var(--gray-1);
+}
+
+.stats-actions button {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.stats-actions button i {
+  font-size: 1.2rem;
+  color: var(--gray-4);
+}
+
+.stats-actions button .count {
+  font-size: 0.7rem;
+  color: var(--gray-3);
+}
+
+/* 音乐卡片 */
+.album-image {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  overflow: visible;
+  box-shadow: 0 0 0 4px var(--album-ring), 0 0 0 5px var(--album-ring-light),
+              0 0 0 8px var(--album-ring), 0 0 0 9px var(--album-ring-light),
+              0 0 0 12px var(--album-ring), 0 0 0 13px var(--album-ring-light);
+}
+
+.album-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.album-image.rotating {
+  animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.player-control-wrapper {
+  position: relative;
+  height: 60px;
+  margin-top: 20px;
+}
+
+.progress-bar {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--gray-1);
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--gray-2);
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.player-info-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+}
+
+.track-album {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--gray-6);
+}
+
+.track-singer {
+  font-size: 0.75rem;
+  color: var(--gray-4);
+}
+
+.play-pause-icon {
+  cursor: pointer;
+}
+
+.play-pause-icon i {
+  font-size: 2rem;
+  color: var(--gray-6);
+}
+
+/* 句子卡片 */
+.sentence-image {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sentence-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+#sentenceText {
+  line-height: 1.8;
+  color: var(--gray-6);
+}
+
+.from {
+  text-align: right;
+  margin-top: 15px;
+  color: var(--gray-4);
+}
+
+/* 文章卡片 */
+.article-image {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.article-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.article-title {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: var(--gray-6);
+}
+
+.article-author {
+  font-size: 0.875rem;
+  color: var(--gray-4);
+  margin-bottom: 16px;
+}
+
+.article-content {
+  line-height: 1.6;
+  color: var(--gray-5);
+  text-align: justify;
+}
+</style>
